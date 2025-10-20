@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import itemRoutes from "./routes/itemRoutes";
+import collaboratorRoutes from "./routes/collaboratorRoutes";
+import "./config/passport";
+import googleAuthRoutes from "./routes/googleAuthRoutes";
 
 dotenv.config();
 connectDB();
@@ -18,9 +21,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use("/api/auth", googleAuthRoutes);
+
 //routes
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
+app.use("/api/collaboration", collaboratorRoutes);
 
 // Simple route
 app.get("/", (_req, res) => {
