@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
@@ -9,7 +11,6 @@ import collaboratorRoutes from "./routes/collaboratorRoutes";
 import "./config/passport";
 import googleAuthRoutes from "./routes/googleAuthRoutes";
 
-dotenv.config();
 connectDB();
 
 const PORT = process.env.PORT || 4000;
