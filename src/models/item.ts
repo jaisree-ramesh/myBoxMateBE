@@ -10,7 +10,6 @@ export interface IItem extends Document {
   image?: string;
   qrCode?: string;
   parentId?: Types.ObjectId; // undefined = top-level box
-
   createdAt: Date;
   updatedAt: Date;
 }
