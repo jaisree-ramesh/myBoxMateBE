@@ -6,6 +6,7 @@ import {
   getItemById,
   updateItem,
   deleteItem,
+  getItemsByParentId,
 } from "../controllers/itemController";
 import { upload } from "../middleware/uploadMiddleware";
 
@@ -20,5 +21,6 @@ router.get("/", getItems);
 router.get("/:id", getItemById);
 router.put("/:id", updateItem);
 router.delete("/:id", deleteItem);
+router.get("/:parentId", getItemsByParentId);
 
 export default router;

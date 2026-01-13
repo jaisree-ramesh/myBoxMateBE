@@ -89,9 +89,76 @@ export const getRequests = async (req: any, res: Response) => {
     const requests = await CollaboratorRequest.find({
       receiver: userId,
       status: "pending",
-    }).populate("sender", "name email");
+    }).populate("sender", "username email");
     res.json(requests);
   } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all accepted collaborators for a user
+export const getCollaborators = async (req: any, res: Response) => {
+  try {
+    const userId = req.user._id;
+
+    // Find all items owned by user that have collaborators
+    const items = await Item.find({ owner: userId })
+      .populate("collaborators", "username email");
+
+    // Collect unique collaborators
+    const collaboratorsSet = new Map();
+
+    items.forEach((item) => {
+      item.collaborators.forEach((c: any) => {
+        collaboratorsSet.set(c._id.toString(), c);
+      });
+    });
+
+    res.json(Array.from(collaboratorsSet.values()));
+  } catch (err) {
+    console.error("Get collaborators error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Remove a collaborator from all user items
+export const removeCollaborator = async (req: any, res: Response) => {
+  try {
+    const userId = req.user._id;
+    const collaboratorId = req.params.id;
+
+    // Remove that collaborator from all user's items
+    await Item.updateMany(
+      { owner: userId },
+      { $pull: { collaborators: collaboratorId } }
+    );
+
+    res.json({ message: "Collaborator removed" });
+  } catch (err) {
+    console.error("Remove collaborator error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Remove collaborator by email (used by frontend)
+export const removeCollaboratorByEmail = async (req: any, res: Response) => {
+  try {
+    const userId = req.user._id;
+    const { collaboratorEmail } = req.body;
+
+    const collaborator = await User.findOne({ email: collaboratorEmail });
+    if (!collaborator) {
+      return res.status(404).json({ message: "Collaborator not found" });
+    }
+
+    await Item.updateMany(
+      { owner: userId },
+      { $pull: { collaborators: collaborator._id } }
+    );
+
+    res.json({ message: "Collaborator removed successfully" });
+  } catch (err) {
+    console.error("Remove collaborator by email error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };

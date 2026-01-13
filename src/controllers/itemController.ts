@@ -120,3 +120,19 @@ export const deleteItem = async (req: any, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Get item by parent ID (only if owner or collaborator)
+export const getItemsByParentId = async (req: any, res: Response) => {
+  try {
+    const userId = req.user._id;
+    const items = await Item.find({
+      parentId: req.params.parentId,
+      $or: [{ owner: userId }, { collaborators: userId }],
+    });
+
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
