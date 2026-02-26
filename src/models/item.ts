@@ -9,7 +9,8 @@ export interface IItem extends Document {
   editedBy?: Types.ObjectId;
   image?: string;
   qrCode?: string;
-  parentId?: Types.ObjectId; // undefined = top-level box
+  box?: Types.ObjectId; // ← which Box this item belongs to
+  parentId?: Types.ObjectId; // ← which Space this item belongs to
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,9 +25,10 @@ const itemSchema = new Schema<IItem>(
     editedBy: { type: Schema.Types.ObjectId, ref: "User" },
     image: { type: String },
     qrCode: { type: String },
-    parentId: { type: Schema.Types.ObjectId, ref: "Item" },
+    box: { type: Schema.Types.ObjectId, ref: "Box" },
+    parentId: { type: Schema.Types.ObjectId, ref: "Space" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Item = mongoose.model<IItem>("Item", itemSchema);
