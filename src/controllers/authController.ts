@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken";
 import { User } from "../models/user";
+import { ensureStarterSpaces } from "../services/starterSpaces";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -20,6 +21,7 @@ export const registerUser = async (req: Request, res: Response) => {
       email,
       password,
     })) as InstanceType<typeof User>;
+    await ensureStarterSpaces(user);
     const token = generateToken((user as any)._id.toString());
 
     res.status(201).json({
@@ -47,6 +49,7 @@ export const loginUser = async (req: Request, res: Response) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    await ensureStarterSpaces(user);
 
     const token = generateToken((user as any)._id.toString());
 

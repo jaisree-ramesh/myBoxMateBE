@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
-
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
@@ -10,6 +9,7 @@ import itemRoutes from "./routes/itemRoutes";
 import collaboratorRoutes from "./routes/collaboratorRoutes";
 import "./config/passport";
 import googleAuthRoutes from "./routes/googleAuthRoutes";
+import spaceRoutes from "./routes/spaceRoutes";
 
 connectDB();
 
@@ -22,12 +22,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api/auth", googleAuthRoutes);
-
 //routes
+
+app.use("/api/auth", googleAuthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/collaboration", collaboratorRoutes);
+app.use("/api", spaceRoutes);
 
 // Simple route
 app.get("/", (_req, res) => {
