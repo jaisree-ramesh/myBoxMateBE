@@ -8,6 +8,7 @@ export interface IUser extends Document {
   avatar?: string;
   googleId?: string;
   createdAt: Date;
+  spacesSeededAt?: Date;
   matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -18,8 +19,9 @@ const userSchema = new Schema<IUser>(
     password: { type: String },
     avatar: { type: String },
     googleId: { type: String },
+    spacesSeededAt: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // 🔒 Hash password before saving

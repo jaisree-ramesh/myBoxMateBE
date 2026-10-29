@@ -8,7 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
+const itemStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: (req, file) => ({
     public_id: `boxmate-items/${file.originalname}`,
@@ -16,4 +16,21 @@ const storage = new CloudinaryStorage({
   }),
 });
 
-export const upload = multer({ storage });
+const spaceStorage = new CloudinaryStorage({
+  cloudinary,
+  params: (_req, file) => ({
+    folder: "boxmate-spaces",
+    public_id: `${Date.now()}-${file.originalname.replace(/\.[^.]+$/, "")}`,
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif"],
+  }),
+});
+
+export const upload = multer({ storage: itemStorage });
+export const spaceUpload = multer({
+  storage: spaceStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => {
+    if (file.mimetype.startsWith("image/")) callback(null, true);
+    else callback(new Error("Only image files are allowed"));
+  },
+});

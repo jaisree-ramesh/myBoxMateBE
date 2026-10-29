@@ -2,6 +2,7 @@ import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import { generateToken } from "../utils/generateToken";
 import { User } from "../models/user";
+import { ensureStarterSpaces } from "../services/starterSpaces";
 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID!);
@@ -29,7 +30,8 @@ router.post("/google", async (req, res) => {
         googleId: payload.sub,
       });
     }
-
+    
+    await ensureStarterSpaces(user);
     const jwt = generateToken((user as any)._id.toString());
 
     res.json({
