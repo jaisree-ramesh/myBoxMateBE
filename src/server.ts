@@ -62,4 +62,12 @@ const startServer = async () => {
   }
 };
 
+app.get("/", (_req, res) => {
+  res.json({
+    status: "ok",
+    app: "BoxMate backend",
+    env: process.env.NODE_ENV || "dev",
+  });
+});
+
 void startServer();
